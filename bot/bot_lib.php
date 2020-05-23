@@ -57,26 +57,19 @@ function get_all($connect, $chat_id){
 
 
 }
+//выборка количества всего
+function get_count($connect){
+    $query = "SELECT COUNT(*) FROM users";
+    $result = mysqli_query($connect, $query);
+    if(!$result)
+        die(mysqli_error($connect));
+    $get_count = mysqli_fetch_assoc($result);
+    mysqli_free_result($result);
+    return $get_count;
 
-/*
- Function for add text entered by user
-*/
 
-//function textlog($connect, $username, $chat_id, $name, $text){
-//
-//    if($chat_id == '')
-//        return false;
-//    $t = "INSERT INTO textlog (username, chat_id, name, text) VALUES ('%s', '%s', '%s', '%s')";
-//    $query = sprintf($t, mysqli_real_escape_string($connect, $username),
-//        mysqli_real_escape_string($connect, $chat_id),
-//        mysqli_real_escape_string($connect, $name),
-//        mysqli_real_escape_string($connect, $text));
-//    $result = mysqli_query($connect, $query);
-//
-//    if(!$result)
-//        die(mysqli_error($connect));
-//    return true;
-//}
+
+}
 
 function textlog2($connect, $username, $chat_id, $name, $phone, $usluga, $instagram, $old_id){
     $username = trim($username);
@@ -144,27 +137,6 @@ function update($feild,$value){
 
 }
 
-
-
-
-
-
-
-
-
-
-/*
-Function to get all users from the database
-*/
-//    if($chat_id == $old_id)
-//        $t = "UPDATE textlog SET username = $username, chat_id = $chat_id, name = $name, phone = $phone, usluga = $usluga, instagram = $instagram";
-//    $query = sprintf($t, mysqli_real_escape_string($connect, $username),
-//        mysqli_real_escape_string($connect, $chat_id),
-//        mysqli_real_escape_string($connect, $name),
-//        mysqli_real_escape_string($connect, $phone),
-//        mysqli_real_escape_string($connect, $usluga),
-//        mysqli_real_escape_string($connect, $instagram));
-
 function users_all($connect){
     $query = "SELECT * FROM users";
     $result = mysqli_query($connect, $query);
@@ -181,7 +153,7 @@ function users_all($connect){
 
 
 
-//========================================================================================================================
+//=====================================================Main function===================================================================
 
 
 function mobile_accept(){
@@ -215,5 +187,64 @@ function date_accept_zapis(){
 
 
 
-//========================================================================================================================
+//=====================================================Main function===================================================================
+//=====================================================CallBack function===================================================================
+function inline_buttons(){
+    global $telegram, $callback_data, $callback_id, $api, $callback_res_id, $callback_message_id, $chat_id, $inline_back;
+    switch ($callback_data){
+        case "polish" :
+            $img = 'images/polishing.jpg';
+            send_answerCallbackQuery($api, $callback_res_id, "Полировка", false);
+            edit_MessageText($api, $callback_id, $callback_message_id, 'Полировка');
+            $telegram->sendPhoto(['chat_id' => $callback_id, 'photo' => $img, 'parse_mode' => 'HTML']);
+            break;
+        case "cut" :
+            $img = 'images/cut.jpg';
+            send_answerCallbackQuery($api, $callback_res_id, "Стрижки", false);
+            edit_MessageText($api, $callback_id, $callback_message_id, 'Стрижки');
+            $telegram->sendPhoto(['chat_id' => $callback_id, 'photo' => $img, 'parse_mode' => 'HTML']);
+            break;
+        case "afro" :
+            $img = 'images/afro.jpg';
+            send_answerCallbackQuery($api, $callback_res_id, "Афрокудри", false);
+            edit_MessageText($api, $callback_id, $callback_message_id, 'Афрокудри');
+            $telegram->sendPhoto(['chat_id' => $callback_id, 'photo' => $img, 'parse_mode' => 'HTML']);
+            break;
+        case "braid" :
+            $img = 'images/hair1.jpg';
+            send_answerCallbackQuery($api, $callback_res_id, "Плетение", false);
+            edit_MessageText($api, $callback_id, $callback_message_id, 'Плетение');
+            $telegram->sendPhoto(['chat_id' => $callback_id, 'photo' => $img, 'parse_mode' => 'HTML']);
+            break;
+        case "evening" :
+            $img = 'images/hair1.jpg';
+            send_answerCallbackQuery($api, $callback_res_id, "Вечерняя прическа", false);
+            edit_MessageText($api, $callback_id, $callback_message_id, 'Вечерняя прическа');
+            $telegram->sendPhoto(['chat_id' => $callback_id, 'photo' => $img, 'parse_mode' => 'HTML']);
+            break;
+        case "marrige" :
+            $img = 'images/wedding.jpg';
+            send_answerCallbackQuery($api, $callback_res_id, "Свадебная прическа", false);
+            edit_MessageText($api, $callback_id, $callback_message_id, 'Свадебная прическа');
+            $telegram->sendPhoto(['chat_id' => $callback_id, 'photo' => $img, 'parse_mode' => 'HTML']);
+            break;
+        case "senior" :
+            $img = 'images/hair1.jpg';
+            send_answerCallbackQuery($api, $callback_res_id, "Выпускная прическа", false);
+            edit_MessageText($api, $callback_id, $callback_message_id, 'Выпускная прическа');
+            $telegram->sendPhoto(['chat_id' => $callback_id, 'photo' => $img, 'parse_mode' => 'HTML']);
+            break;
+    }
+}
+
+function send_answerCallbackQuery($api, $callback_id, $text, $show_alert){
+    file_get_contents("https://api.telegram.org/bot".$api."/answerCallbackQuery?callback_query_id=".$callback_id."&text=".$text."&show_alert=".$show_alert);
+}
+function edit_MessageText($api, $callback_id, $callback_message_id, $text){
+    file_get_contents("https://api.telegram.org/bot".$api."/editMessageText?chat_id=".$callback_id."&message_id=".$callback_message_id."&text=".urlencode($text));
+}
+
+
+
+//=====================================================CallBack function===================================================================
 ?>
